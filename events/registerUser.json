@@ -1,0 +1,4 @@
+{
+  "body": "{\"registrationCode\": \"DELL-VR\", \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john@doe.com\", \"company\": \"demo company\", \"street\": \"tokha\", \"city\": \"kathmandu\", \"postalCode\": \"12345\", \"country\": \"UK & Ireland\"}",
+  "httpMethod": "POST"
+}

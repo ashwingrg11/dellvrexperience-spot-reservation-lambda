@@ -1,0 +1,175 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  dell-vr experience, spot reservation
+
+  Sample SAM for spot reservation
+
+Parameters:
+  BUCKETNAME:
+    Type: String
+    Description: Bucket name to store report
+  DDBTABLENAME:
+    Type: String
+    Description: DynamoDB Table name
+  REPORTFILENAME:
+    Type: String
+    Description: Filename of report
+  FRONTENDURL:
+    Type: String
+    Description: Frontend url of site
+  TOADDRESSES:
+    Type: String
+    Description: To address list
+  CCADDRESSES:
+    Type: String
+    Description: To address list
+  SENDEREMAIL:
+    Type: String
+    Description: Sender email
+  AWSREGION:
+    Type: String
+    Description: AWS Region
+  SMTPHOST:
+    Type: String
+    Description: SMTP Host
+  SMTPPORT:
+    Type: String
+    Description: SMTP Port
+  SMTPUSER:
+    Type: String
+    Description: SMTP Username
+  SMTPPASS:
+    Type: String
+    Description: SMTP Password
+  LAMBDAROLE:
+    Type: String
+    Description: Role for lambda function
+  STAGE:
+    Type: String
+    Description: Stage name for api gateway
+    Default: "stage"
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 60
+    Environment:
+      Variables:
+        BUCKETNAME:
+          Ref: BUCKETNAME
+        DDBTABLENAME:
+          Ref: DDBTABLENAME
+        REPORTFILENAME:
+          Ref: REPORTFILENAME
+        FRONTENDURL:
+          Ref: FRONTENDURL
+        TOADDRESSES:
+          Ref: TOADDRESSES
+        CCADDRESSES:
+          Ref: CCADDRESSES
+        SENDEREMAIL:
+          Ref: SENDEREMAIL
+        AWSREGION:
+          Ref: AWSREGION
+        SMTPHOST:
+          Ref: SMTPHOST
+        SMTPPORT:
+          Ref: SMTPPORT
+        SMTPUSER:
+          Ref: SMTPUSER
+        SMTPPASS:
+          Ref: SMTPPASS
+Resources:
+  DellVRApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName:
+        Ref: STAGE
+  RegisterUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: spot-reservation/
+      Handler: registerUser.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            Path: /api/v1/register-user
+            Method: post
+            ApiId:
+              Ref: DellVRApi
+      Role:
+        Ref: LAMBDAROLE
+  GenerateReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: spot-reservation/
+      Handler: generateReport.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            Path: /api/v1/generate-report
+            Method: get
+            ApiId:
+              Ref: DellVRApi
+      Role:
+        Ref: LAMBDAROLE
+      Layers:
+        - arn:aws:lambda:eu-central-1:135385349298:layer:nodemailer-nodejs:1
+  DownloadReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: spot-reservation/
+      Handler: downloadReport.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            Path: /api/v1/download-report
+            Method: get
+            ApiId:
+              Ref: DellVRApi
+      Role:
+        Ref: LAMBDAROLE
+      Layers:
+        - arn:aws:lambda:eu-central-1:135385349298:layer:nodemailer-nodejs:1
+  SendEmailReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: spot-reservation/
+      Handler: sendEmailReport.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            Path: /api/v1/send-email-report
+            Method: get
+            ApiId:
+              Ref: DellVRApi
+      Role:
+        Ref: LAMBDAROLE
+      Layers:
+        - arn:aws:lambda:eu-central-1:135385349298:layer:nodemailer-nodejs:1
+  ContactUsEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: spot-reservation/
+      Handler: contactUsEmail.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            Path: /api/v1/contact-email
+            Method: post
+            ApiId:
+              Ref: DellVRApi
+      Role:
+        Ref: LAMBDAROLE
+      Layers:
+        - arn:aws:lambda:eu-central-1:135385349298:layer:nodemailer-nodejs:1

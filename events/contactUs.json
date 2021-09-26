@@ -1,0 +1,4 @@
+{
+  "body": "{\"salutation\": \"test salutation\", \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"johndoe@gmail.com\", \"company\": \"john company\", \"message\": \"hello message from contact us page\"}",
+  "httpMethod": "POST"
+}

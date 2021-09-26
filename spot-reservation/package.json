@@ -1,0 +1,22 @@
+{
+  "name": "spot_reservation_dell_vrexp",
+  "version": "1.0.0",
+  "description": "Spot Reservation endpoints for dell vr-experience",
+  "main": "app.js",
+  "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "dotenv": "^8.2.0",
+    "json2csv": "^5.0.1",
+    "nodemailer": "^6.4.11"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}

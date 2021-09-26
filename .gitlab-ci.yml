@@ -1,0 +1,69 @@
+image: registry.gitlab.com/cloudyfox/devops/generic-docker-images/build/sam-nodejs-12.x:latest
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - sam build
+
+Staging-Deploy:
+  stage: deploy
+  environment:
+    name: staging
+    url: https://staging.dell-vr-experience.com
+  before_script:
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_STAGE
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_STAGE
+    - export S3_BUCKET=$S3_BUCKET_STAGE
+    - export STACK_NAME=$STACK_NAME_STAGE
+    - export S3_REPORT_BUCKET=$S3_REPORT_BUCKET_STAGE
+    - export DYNAMODB_TABLE=$DYNAMODB_TABLE_STAGE
+    - export REPORT_FILENAME=$REPORT_FILENAME_STAGE
+    - export FRONTEND_URL=$FRONTEND_URL_STAGE
+    - export TO_ADDRESSES=$TO_ADDRESSES_STAGE
+    - export CC_ADDRESSES=$CC_ADDRESSES_STAGE
+    - export SENDER_EMAIL=$SENDER_EMAIL_STAGE
+    - export SMTP_HOST=$SMTP_HOST_STAGE
+    - export SMTP_USER=$SMTP_USER_STAGE
+    - export SMTP_PASS=$SMTP_PASS_STAGE
+    - export SMTP_PORT=$SMTP_PORT_STAGE
+    - export LAMBDA_ROLE=$LAMBDA_ROLE_STAGE
+    - export STAGE=stage
+  script:
+    - sam deploy --template-file template.yaml --capabilities "CAPABILITY_IAM" --stack-name $STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --parameter-overrides BUCKETNAME=$S3_REPORT_BUCKET DDBTABLENAME=$DYNAMODB_TABLE REPORTFILENAME=$REPORT_FILENAME FRONTENDURL=$FRONTEND_URL TOADDRESSES=$TO_ADDRESSES CCADDRESSES=$CC_ADDRESSES SENDEREMAIL=$SENDER_EMAIL AWSREGION=$AWS_REGION SMTPHOST=SMTP_HOST SMTPUSER=SMTP_USER SMTPPASS=$SMTP_PASS SMTPPORT=$SMTP_PORT STAGE=$STAGE LAMBDAROLE=$LAMBDA_ROLE > /dev/null
+  only:
+    - staging
+  when: manual
+
+Production-Deploy:
+  stage: deploy
+  environment:
+    name: production
+    url: https://dell-vr-experience.com
+  before_script:
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PROD
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PROD
+    - export S3_BUCKET=$S3_BUCKET_PROD
+    - export STACK_NAME=$STACK_NAME_PROD
+    - export S3_REPORT_BUCKET=$S3_REPORT_BUCKET_PROD
+    - export DYNAMODB_TABLE=$DYNAMODB_TABLE_PROD
+    - export REPORT_FILENAME=$REPORT_FILENAME_PROD
+    - export FRONTEND_URL=$FRONTEND_URL_PROD
+    - export TO_ADDRESSES=$TO_ADDRESSES_PROD
+    - export CC_ADDRESSES=$CC_ADDRESSES_PROD
+    - export SENDER_EMAIL=$SENDER_EMAIL_PROD
+    - export SMTP_HOST=$SMTP_HOST_PROD
+    - export SMTP_USER=$SMTP_USER_PROD
+    - export SMTP_PASS=$SMTP_PASS_PROD
+    - export SMTP_PORT=$SMTP_PORT_PROD
+    - export LAMBDA_ROLE=$LAMBDA_ROLE_PROD
+    - export STAGE=prod
+  script:
+    - sam deploy --template-file template.yaml --capabilities "CAPABILITY_IAM" --stack-name $STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --parameter-overrides BUCKETNAME=$S3_REPORT_BUCKET DDBTABLENAME=$DYNAMODB_TABLE REPORTFILENAME=$REPORT_FILENAME FRONTENDURL=$FRONTEND_URL TOADDRESSES=$TO_ADDRESSES CCADDRESSES=$CC_ADDRESSES SENDEREMAIL=$SENDER_EMAIL AWSREGION=$AWS_REGION SMTPHOST=SMTP_HOST SMTPUSER=SMTP_USER SMTPPASS=$SMTP_PASS SMTPPORT=$SMTP_PORT STAGE=$STAGE LAMBDAROLE=$LAMBDA_ROLE > /dev/null
+  only:
+    - production
+    - tags
+  when: manual

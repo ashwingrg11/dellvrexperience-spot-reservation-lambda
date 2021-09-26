@@ -1,0 +1,25 @@
+{
+  "development": {
+    "BUCKETNAME": "ashwin-vr-test",
+    "DDBTABLENAME": "SpotReservationTable",
+    "REPORTFILENAME": "SpotReservations-DellVRExp.csv",
+    "FRONTENDURL": "http://localhost/frontend/app",
+    "TOADDRESSES": ["ashwin.grg11@gmail.com"],
+    "CCADDRESSES": ["gloomy.gurung@gmail.com"],
+    "SENDEREMAIL": "ashwin.gurung@cloudyfox.com",
+    "AWSREGION": "ap-south-1"
+  },
+  "staging": {
+    "BUCKETNAME": "staging-report-dell-vr-experience",
+    "DDBTABLENAME": "staging-dell-vr-experience",
+    "REPORTFILENAME": "SpotReservations-DellVRExp.csv",
+    "FRONTENDURL": "http://staging-dell-vr-experience.s3-website.eu-central-1.amazonaws.com",
+    "TOADDRESSES": ["sthapa@aximpro.com"],
+    "CCADDRESSES": ["sanjeev@cloudyfox.com"],
+    "SENDEREMAIL": "ashwin.gurung@cloudyfox.com",
+    "AWSREGION": "eu-central-1"
+  },
+  "production": {
+
+  }
+}
